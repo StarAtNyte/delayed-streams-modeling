@@ -27,7 +27,6 @@
     "node-record-lpcm16": "^1.0.1",
     "speaker": "^0.5.4",
     "robotjs": "^0.6.0",
-    "node-screenshot-desktop": "^1.1.1",
     "tesseract.js": "^5.1.1",
     "openai": "^4.67.3"
   },
