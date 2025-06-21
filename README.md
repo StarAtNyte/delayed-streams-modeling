@@ -1,168 +1,207 @@
-<a href="https://huggingface.co/collections/kyutai/speech-to-text-685403682cf8a23ab9466886" target="_blank" style="margin: 2px;">
-    <img alt="Hugging Face" src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-KyutaiSTT-blue" style="display: inline-block; vertical-align: middle;"/>
-</a>
-<a target="_blank" href="https://colab.research.google.com/drive/1mc0Q-FoHxU2pEvId8rTdS4q1r1zorJhS?usp=sharing">
-  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-</a>
+# VoiceOS - Voice-Controlled Computer Assistant
 
+VoiceOS is an advanced voice-controlled computer assistant that leverages Kyutai's Delayed Streams Modeling (DSM) for real-time speech recognition and natural computer control.
 
-This repo contains instructions and examples of how to run Kyutai Speech-To-Text models.
-These models are powered by delayed streams modeling (DSM),
-a flexible formulation for streaming, multimodal sequence-to-sequence learning.
+## Features
 
-Text-to-speech models based on DSM coming soon!
-[Sign up here](https://docs.google.com/forms/d/15sB4zyfuwyXTii4OM74hFGkk4DlDNynJ9xywnaEzE4I/edit)
-to be notified when we open-source text-to-speech and [Unmute](https://unmute.sh).
+### 🎤 Advanced Voice Recognition
+- **Kyutai DSM Integration**: Uses state-of-the-art speech-to-text models
+- **Real-time Processing**: 0.5-second latency for immediate response
+- **Semantic VAD**: Intelligent voice activity detection
+- **Multi-language Support**: English and French recognition
+- **Word-level Timestamps**: Precise timing for each spoken word
 
-## Kyutai Speech-To-Text
+### 🖥️ Computer Control
+- **File Operations**: Create, move, delete, and search files
+- **Application Management**: Launch, switch, and close applications
+- **System Commands**: Volume control, screenshots, screen locking
+- **Window Management**: Minimize, maximize, and close windows
+- **Cross-platform Support**: Windows, macOS, and Linux
 
-**More details can be found on the [project page](https://kyutai.org/next/stt).**
+### 🛡️ Safety & Security
+- **Confirmation System**: Asks for confirmation on destructive actions
+- **Command Validation**: Ensures safe execution of system commands
+- **Error Handling**: Graceful failure recovery and user feedback
+- **Privacy First**: All processing can be done locally
 
-Kyutai STT models are optimized for real-time usage, can be batched for efficiency, and return word level timestamps.
-We provide two models:
-- `kyutai/stt-1b-en_fr`, an English and French model with ~1B parameters, a 0.5 second delay, and a [semantic VAD](https://kyutai.org/next/stt#semantic-vad).
-- `kyutai/stt-2.6b-en`, an English-only model with ~2.6B parameters and a 2.5 second delay.
+### 🎨 Modern Interface
+- **Real-time Visualization**: Audio waveform and processing indicators
+- **Command History**: Track and review executed commands
+- **System Monitoring**: Real-time system status and performance
+- **Customizable Settings**: Personalize voice recognition and behavior
 
-These speech-to-text models have several advantages:
-- Streaming inference: the models can process audio in chunks, which allows
-  for real-time transcription, and is great for interactive applications.
-- Easy batching for maximum efficiency: a H100 can process 400 streams in
-  real-time.
-- They return word-level timestamps.
-- The 1B model has a semantic Voice Activity Detection (VAD) component that
-  can be used to detect when the user is speaking. This is especially useful
-  for building voice agents.
+## Quick Start
 
-You can retrieve the sample files used in the following snippets via:
-```bash
-wget https://github.com/metavoiceio/metavoice-src/raw/main/assets/bria.mp3
-wget https://github.com/kyutai-labs/moshi/raw/refs/heads/main/data/sample_fr_hibiki_crepes.mp3
+### Prerequisites
+- Node.js 18+ 
+- Python 3.8+ (for Kyutai STT integration)
+- Platform-specific dependencies:
+  - **Windows**: PowerShell 5.0+
+  - **macOS**: Xcode Command Line Tools
+  - **Linux**: wmctrl, xdotool, amixer
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/voiceos.git
+   cd voiceos
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Install Kyutai STT (Python)**
+   ```bash
+   pip install moshi>=0.2.6
+   # or with uv
+   uv add moshi
+   ```
+
+4. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Start the backend server**
+   ```bash
+   npm run server
+   ```
+
+6. **Open your browser**
+   Navigate to `http://localhost:3000`
+
+## Voice Commands
+
+### File Operations
+- "Open calculator"
+- "Take a screenshot" 
+- "Create new folder"
+- "Search for documents"
+- "Open [application name]"
+
+### System Control
+- "Show desktop"
+- "Lock screen"
+- "Set volume to [number]"
+- "Close current window"
+- "Minimize window"
+- "Maximize window"
+
+### Custom Commands
+VoiceOS supports natural language variations:
+- "Open calc" → Opens calculator
+- "Take screenshot" → Takes a screenshot
+- "Adjust volume to fifty percent" → Sets volume to 50%
+
+## Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Voice Input   │───▶│  Kyutai DSM     │───▶│ Command Parser  │
+│   (Microphone)  │    │  (STT + VAD)    │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                                       │
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│ Voice Response  │◀───│  TTS Engine     │◀───│ Action Engine   │
+│   (Speakers)    │    │                 │    │                 │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                                                       │
+                              ┌─────────────────┐    │
+                              │ Computer APIs   │◀───┘
+                              │ (OS Integration)│
+                              └─────────────────┘
 ```
 
-### PyTorch implementation
-<a href="https://huggingface.co/kyutai/stt-2.6b-en" target="_blank" style="margin: 2px;">
-    <img alt="Hugging Face" src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-blue" style="display: inline-block; vertical-align: middle;"/>
-</a>
-<a target="_blank" href="https://colab.research.google.com/drive/1mc0Q-FoHxU2pEvId8rTdS4q1r1zorJhS?usp=sharing">
-  <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-</a>
+## Technology Stack
 
-This requires the [moshi package](https://pypi.org/project/moshi/)
-with version 0.2.6 or later, which can be installed via pip.
+- **Frontend**: React 18, TypeScript, Tailwind CSS, Framer Motion
+- **Backend**: Node.js, Express, WebSocket
+- **Speech Processing**: Kyutai DSM, Moshi Python package
+- **Computer Control**: Platform-specific APIs and command-line tools
+- **Build Tool**: Vite
+- **Deployment**: Netlify (frontend), Node.js server (backend)
 
-```bash
-python -m moshi.run_inference --hf-repo kyutai/stt-2.6b-en bria.mp3
+## Development
+
+### Project Structure
+```
+voiceos/
+├── src/                    # React frontend
+│   ├── components/         # UI components
+│   ├── contexts/          # React contexts
+│   └── main.tsx           # Entry point
+├── server/                # Node.js backend
+│   ├── index.js           # Server entry point
+│   ├── voice-processor.js # STT integration
+│   └── command-executor.js# Command execution
+├── scripts/               # Python STT scripts
+└── configs/               # Kyutai model configs
 ```
 
-If you have [uv](https://docs.astral.sh/uv/) installed, you can skip the installation step and run directly:
+### Running Tests
 ```bash
-uvx --with moshi python -m moshi.run_inference --hf-repo kyutai/stt-2.6b-en bria.mp3
-```
-It will install the moshi package in a temporary environment and run the speech-to-text.
+# Frontend tests
+npm test
 
-Additionally, we provide two scripts that highlight different usage scenarios. The first script illustrates how to extract word-level timestamps from the model's outputs:
+# Backend tests  
+npm run test:server
 
-```bash
-uv run \
-  scripts/streaming_stt_timestamps.py \
-  --hf-repo kyutai/stt-2.6b-en \
-  --file bria.mp3
+# Integration tests
+npm run test:integration
 ```
 
-The second script can be used to run a model on an existing Hugging Face dataset and calculate its performance metrics: 
+### Building for Production
 ```bash
-uv run scripts/streaming_stt.py  \
-  --dataset meanwhile  \
-  --hf-repo kyutai/stt-2.6b-en
+# Build frontend
+npm run build
+
+# Start production server
+npm start
 ```
 
-### Rust server
-<a href="https://huggingface.co/kyutai/stt-2.6b-en-candle" target="_blank" style="margin: 2px;">
-    <img alt="Hugging Face" src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-blue" style="display: inline-block; vertical-align: middle;"/>
-</a>
+## Kyutai STT Integration
 
-The Rust implementation provides a server that can process multiple streaming
-queries in parallel. Dependening on the amount of memory on your GPU, you may
-have to adjust the batch size from the config file. For a L40S GPU, a batch size
-of 64 works well and requests can be processed at 3x real-time speed.
+VoiceOS integrates with Kyutai's speech-to-text models:
 
-In order to run the server, install the [moshi-server
-crate](https://crates.io/crates/moshi-server) via the following command. The
-server code can be found in the
-[kyutai-labs/moshi](https://github.com/kyutai-labs/moshi/tree/main/rust/moshi-server)
-repository.
-```bash
-cargo install --features cuda moshi-server
-```
+- **kyutai/stt-1b-en_fr**: 1B parameter model with 0.5s delay
+- **kyutai/stt-2.6b-en**: 2.6B parameter English-only model with 2.5s delay
 
-Then the server can be started via the following command using the config file
-from this repository.
-For `kyutai/stt-1b-en_fr`, use `configs/config-stt-en_fr.hf.toml`,
-and for `kyutai/stt-2.6b-en`, use `configs/config-stt-en-hf.toml`,
+### Model Features
+- Streaming inference for real-time transcription
+- Batch processing for efficiency (400 streams on H100)
+- Word-level timestamps
+- Semantic Voice Activity Detection
+- Multi-language support (English/French)
 
-```bash
-moshi-server worker --config configs/config-stt-en_fr-hf.toml
-```
+## Contributing
 
-Once the server has started you can run a streaming inference with the following
-script.
-```bash
-uv run scripts/asr-streaming-query.py bria.mp3
-```
-
-The script limits the decoding speed to simulates real-time processing of the audio. 
-Faster processing can be triggered by setting 
-the real-time factor, e.g. `--rtf 500` will process
-the data as fast as possible.
-
-### Rust standalone
-<a href="https://huggingface.co/kyutai/stt-2.6b-en-candle" target="_blank" style="margin: 2px;">
-    <img alt="Hugging Face" src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-blue" style="display: inline-block; vertical-align: middle;"/>
-</a>
-
-A standalone Rust example script is provided in the `stt-rs` directory in this repo.
-This can be used as follows:
-```bash
-cd stt-rs
-cargo run --features cuda -r -- bria.mp3
-```
-You can get the timestamps by adding the `--timestamps` flag, and see the output
-of the semantic VAD by adding the `--vad` flag.
-
-### MLX implementation
-<a href="https://huggingface.co/kyutai/stt-2.6b-en-mlx" target="_blank" style="margin: 2px;">
-    <img alt="Hugging Face" src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Model-blue" style="display: inline-block; vertical-align: middle;"/>
-</a>
-
-[MLX](https://ml-explore.github.io/mlx/build/html/index.html) is Apple's ML framework that allows you to use
-hardware acceleration on Apple silicon.
-
-This requires the [moshi-mlx package](https://pypi.org/project/moshi-mlx/)
-with version 0.2.6 or later, which can be installed via pip.
-
-```bash
-python -m moshi_mlx.run_inference --hf-repo kyutai/stt-2.6b-en-mlx bria.mp3 --temp 0
-```
-
-If you have [uv](https://docs.astral.sh/uv/) installed, you can skip the installation step and run directly:
-```bash
-uvx --with moshi-mlx python -m moshi_mlx.run_inference --hf-repo kyutai/stt-2.6b-en-mlx bria.mp3 --temp 0
-```
-It will install the moshi package in a temporary environment and run the speech-to-text.
-
-The MLX models can also be used in swift using the [moshi-swift
-codebase](https://github.com/kyutai-labs/moshi-swift), the 1b model has been
-tested to work fine on an iPhone 16 Pro.
-
-## Text-to-Speech
-
-We're in the process of open-sourcing our TTS models. Check back for updates!
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-The present code is provided under the MIT license for the Python parts, and Apache license for the Rust backend.
-The web client code is provided under the MIT license.
-Note that parts of this code is based on [AudioCraft](https://github.com/facebookresearch/audiocraft), released under
-the MIT license.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-The weights for the speech-to-text models are released under the CC-BY 4.0 license.
+## Acknowledgments
+
+- **Kyutai Labs** for the Delayed Streams Modeling and STT models
+- **Moshi** for the Python STT integration package
+- **React** and **Node.js** communities for excellent tooling
+
+## Roadmap
+
+- [ ] **Phase 1**: Core speech pipeline and basic commands ✅
+- [ ] **Phase 2**: Advanced computer control and screen awareness
+- [ ] **Phase 3**: Natural language processing and context understanding  
+- [ ] **Phase 4**: Workflow automation and learning capabilities
+- [ ] **Phase 5**: Mobile companion app and cloud sync
+
+---
+
+**VoiceOS** - Control your computer naturally with voice commands powered by cutting-edge AI.
